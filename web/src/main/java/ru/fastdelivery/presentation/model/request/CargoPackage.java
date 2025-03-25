@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public record CargoPackage(
-    @Schema(description = "Вес упаковки, граммы", example = "5667.45") @Min(0) @Max(1500)
+    @Schema(description = "Вес упаковки, граммы", example = "5667.45") @Min(0) @Max(150_000)
         BigInteger weight,
     @Schema(description = "Длинна упаковки, миллиметры", example = "345") @Min(0) @Max(1500)
         BigDecimal length,

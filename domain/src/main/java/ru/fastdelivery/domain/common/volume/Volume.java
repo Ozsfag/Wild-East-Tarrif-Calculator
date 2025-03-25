@@ -3,44 +3,53 @@ package ru.fastdelivery.domain.common.volume;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public record Volume(BigDecimal volumeMillimeters) implements Comparable<Volume> {
+/**
+ * Represents a volume measurement in cubic millimeters.
+ */
+public record Volume(BigDecimal cubicMillimeters) implements Comparable<Volume> {
+
   public Volume {
-    if (isLessThanZero(volumeMillimeters)) {
-      throw new IllegalArgumentException("Volume cannot be below Zero!");
+    if (isNegative(cubicMillimeters)) {
+      throw new IllegalArgumentException("Volume cannot be below zero!");
     }
   }
 
-  private static boolean isLessThanZero(BigDecimal price) {
-    return BigDecimal.ZERO.compareTo(price) > 0;
+  private static boolean isNegative(BigDecimal volume) {
+    return BigDecimal.ZERO.compareTo(volume) > 0;
   }
 
   public static Volume zero() {
     return new Volume(BigDecimal.ZERO);
   }
 
-  public BigDecimal cubicMeters() {
-    return volumeMillimeters.divide(BigDecimal.valueOf(1_000_000_000), 100, RoundingMode.HALF_UP);
+  /**
+   * Converts the volume from cubic millimeters to cubic meters with a precision of four decimal places.
+   *
+   * @return the volume in cubic meters
+   */
+  public BigDecimal toCubicMeters() {
+    return cubicMillimeters.divide(BigDecimal.valueOf(1_000_000_000), 4, RoundingMode.HALF_UP);
   }
 
   public Volume add(Volume additionalVolume) {
-    return new Volume(this.volumeMillimeters.add(additionalVolume.volumeMillimeters));
+    return new Volume(this.cubicMillimeters.add(additionalVolume.cubicMillimeters));
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+  public boolean equals(Object obj) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    Volume volume = (Volume) o;
-    return volumeMillimeters.compareTo(volume.volumeMillimeters) == 0;
+    Volume otherVolume = (Volume) obj;
+    return cubicMillimeters.compareTo(otherVolume.cubicMillimeters) == 0;
   }
 
   @Override
-  public int compareTo(Volume v) {
-    return v.volumeMillimeters().compareTo(volumeMillimeters());
+  public int compareTo(Volume otherVolume) {
+    return this.cubicMillimeters.compareTo(otherVolume.cubicMillimeters);
   }
 
-  public boolean greaterThan(Volume v) {
-    return volumeMillimeters().compareTo(v.volumeMillimeters) > 0;
+  public boolean isGreaterThan(Volume otherVolume) {
+    return this.cubicMillimeters.compareTo(otherVolume.cubicMillimeters) > 0;
   }
 }

@@ -28,7 +28,7 @@ public class TariffCalculateUseCase {
   }
 
   public Price getMaxPriceByVolume(Shipment shipment) {
-    var volumeAllPackagesMm = shipment.volumeAllPackages().cubicMeters();
+    var volumeAllPackagesMm = shipment.volumeAllPackages().toCubicMeters();
     return volumePriceProvider.costPerCubicMeter().multiply(volumeAllPackagesMm);
   }
 }
