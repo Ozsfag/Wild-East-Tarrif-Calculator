@@ -20,7 +20,8 @@
 ### Используя среду разработки IDEA
 
 Откройте проект. Дождитесь индексации. Создайте конфигурацию запуска
-или запустите main метод класса [app/src/main/java/ru/fastdelivery/Main.java](app/src/main/java/ru/fastdelivery/Main.java)
+или запустите main метод
+класса [app/src/main/java/ru/fastdelivery/Main.java](app/src/main/java/ru/fastdelivery/Main.java)
 
 ### Используя Docker
 
@@ -66,7 +67,7 @@ java -jar app/target/app-1.0-SNAPSHOT.jar
 фазу тестов, при этом будет произведена проверка
 стиля кода (checkstyle). Отчеты по checkstyle
 найдете в файле
-[target/site/checkstyle-aggregate.html](target/site/checkstyle-aggregate.html) 
+[target/site/checkstyle-aggregate.html](target/site/checkstyle-aggregate.html)
 
 Linux/macOs:
 
@@ -83,7 +84,7 @@ Windows:
 ## Swagger
 
 При запущенном приложение вы можете
-выполнять запросы используя интерфейс Swagger. 
+выполнять запросы используя интерфейс Swagger.
 
 http://localhost:8080/swagger-ui/index.html
 

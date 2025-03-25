@@ -10,9 +10,7 @@ import ru.fastdelivery.domain.common.currency.CurrencyPropertiesProvider;
 @SpringBootTest(classes = Config.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class ControllerTest {
 
-    @Autowired
-    protected TestRestTemplate restTemplate;
+  @Autowired protected TestRestTemplate restTemplate;
 
-    @MockBean
-    protected CurrencyPropertiesProvider currencyPropertiesProvider;
+  @MockBean protected CurrencyPropertiesProvider currencyPropertiesProvider;
 }
