@@ -31,5 +31,7 @@ public class PricesRublesProperties implements WeightPriceProvider, VolumePriceP
   }
 
   @Override
-  public Price costPerCubicMeter() {return new Price(perCubicMeter, currencyFactory.create("RUB"));}
+  public Price costPerCubicMeter() {
+    return new Price(perCubicMeter, currencyFactory.create("RUB"));
+  }
 }

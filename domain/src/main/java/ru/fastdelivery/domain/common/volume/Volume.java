@@ -3,9 +3,7 @@ package ru.fastdelivery.domain.common.volume;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/**
- * Represents a volume measurement in cubic millimeters.
- */
+/** Represents a volume measurement in cubic millimeters. */
 public record Volume(BigDecimal cubicMillimeters) implements Comparable<Volume> {
 
   public Volume {
@@ -23,7 +21,8 @@ public record Volume(BigDecimal cubicMillimeters) implements Comparable<Volume> 
   }
 
   /**
-   * Converts the volume from cubic millimeters to cubic meters with a precision of four decimal places.
+   * Converts the volume from cubic millimeters to cubic meters with a precision of four decimal
+   * places.
    *
    * @return the volume in cubic meters
    */

@@ -17,15 +17,18 @@ import ru.fastdelivery.domain.common.volume.Volume;
 import ru.fastdelivery.domain.common.weight.Weight;
 import ru.fastdelivery.domain.delivery.pack.Pack;
 import ru.fastdelivery.domain.delivery.shipment.Shipment;
+import ru.fastdelivery.presentation.model.request.Coordinate;
+import ru.fastdelivery.services.GoogleMapsService;
 
 class TariffCalculateUseCaseTest {
 
   final WeightPriceProvider weightPriceProvider = mock(WeightPriceProvider.class);
   final VolumePriceProvider volumePriceProvider = mock(VolumePriceProvider.class);
+  final GoogleMapsService googleMapsService = mock(GoogleMapsService.class);
   final Currency currency = new CurrencyFactory(code -> true).create("RUB");
 
   final TariffCalculateUseCase tariffCalculateUseCase =
-      new TariffCalculateUseCase(weightPriceProvider, volumePriceProvider);
+      new TariffCalculateUseCase(weightPriceProvider, volumePriceProvider, googleMapsService);
 
   @Test
   @DisplayName("Расчет стоимости доставки -> успешно")
@@ -42,9 +45,11 @@ class TariffCalculateUseCaseTest {
                 new Pack(
                     new Weight(BigInteger.valueOf(1200)), new Volume(BigDecimal.valueOf(1500)))),
             new CurrencyFactory(code -> true).create("RUB"));
+    var departure = new Coordinate(55.755826, 37.617288);
+    var destination = new Coordinate(56.755826, 38.617288);
     var expectedPrice = new Price(BigDecimal.valueOf(120), currency);
 
-    var actualPrice = tariffCalculateUseCase.calc(shipment);
+    var actualPrice = tariffCalculateUseCase.calc(shipment, departure, destination);
 
     assertThat(actualPrice)
         .usingRecursiveComparison()
