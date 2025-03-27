@@ -16,11 +16,12 @@ import ru.fastdelivery.domain.common.weight.Weight;
 import ru.fastdelivery.domain.delivery.pack.Pack;
 import ru.fastdelivery.domain.delivery.shipment.Shipment;
 import ru.fastdelivery.presentation.model.request.CalculatePackagesRequest;
+import ru.fastdelivery.presentation.model.request.CoordinateRequest;
 import ru.fastdelivery.presentation.model.response.CalculatePackagesResponse;
 import ru.fastdelivery.usecase.TariffCalculateUseCase;
 
 @RestController
-@RequestMapping("/api/v1/calculate/")
+@RequestMapping("/api/v1/calculate")
 @RequiredArgsConstructor
 @Tag(name = "Расчеты стоимости доставки")
 public class CalculateController {
@@ -48,10 +49,12 @@ public class CalculateController {
                   return new Pack(weight, volume);
                 })
             .toList();
-    var departure = request.departure();
-    var destination = request.destination();
+    var departureRequest = request.departure();
+    var destinationRequest = request.destination();
+    var departureDto = CoordinateRequest.mapTo(departureRequest);
+    var destinationDto = CoordinateRequest.mapTo(destinationRequest);
     var shipment = new Shipment(packsWeights, currencyFactory.create(request.currencyCode()));
-    var calculatedPrice = tariffCalculateUseCase.calc(shipment, departure, destination);
+    var calculatedPrice = tariffCalculateUseCase.calc(shipment, departureDto, destinationDto);
     var minimalPrice = tariffCalculateUseCase.minimalPrice();
     return new CalculatePackagesResponse(calculatedPrice, minimalPrice);
   }

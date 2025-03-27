@@ -6,5 +6,5 @@ cost:
     perKg: 400
     minimal: 350
     perCubicMeter: 500
-google_maps:
-  api_key: AIzaSyAXrsni2fDTeSUWgSuDCyANSt1M1_Lnh1g
+navigator:
+  api_key: "608d9eec-c525-4e01-8814-158d3863eefd"

@@ -1,6 +1,7 @@
 package ru.fastdelivery.presentation.model.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -21,19 +22,16 @@ public record CalculatePackagesRequest(
                     + "]")
         @NotNull(message = "Packages list must not be null")
         @NotEmpty(message = "Packages list must not be empty")
-        List<CargoPackage> packages,
+        List<CargoPackageRequest> packages,
     @Schema(description = "Трехбуквенный код валюты", example = "RUB")
-        @NotNull(message = "Currency code must not be null")
+        @NotNull(message = "Currency code must not be null.")
+        @NotBlank(message = "Currency code must be not blank.")
         String currencyCode,
     @Schema(
             description = "Координаты отправиеля",
             example = "{\"latitude\": 55.755826, \"longitude\": 37.617288}")
-        @NotNull
-        @NotEmpty
-        Coordinate departure,
+        CoordinateRequest departure,
     @Schema(
             description = "Координаты получателя",
             example = "{\"latitude\": 55.755826, \"longitude\": 37.617288}")
-        @NotNull
-        @NotEmpty
-        Coordinate destination) {}
+        CoordinateRequest destination) {}

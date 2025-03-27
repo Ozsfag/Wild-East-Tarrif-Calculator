@@ -7,4 +7,8 @@ public record ApiError(@JsonIgnore HttpStatus httpStatus, String status, String 
   public static ApiError badRequest(String message) {
     return new ApiError(HttpStatus.BAD_REQUEST, "error", message);
   }
+
+  public static ApiError invalidApiKey(String message) {
+    return new ApiError(HttpStatus.UNAUTHORIZED, "error", message);
+  }
 }

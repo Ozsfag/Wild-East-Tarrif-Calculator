@@ -1,21 +1,20 @@
 package ru.fastdelivery.usecase;
 
+import java.math.BigDecimal;
 import javax.inject.Named;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import ru.fastdelivery.domain.common.price.Price;
+import ru.fastdelivery.domain.delivery.coordinate.Coordinate;
 import ru.fastdelivery.domain.delivery.shipment.Shipment;
-import ru.fastdelivery.presentation.model.request.Coordinate;
-import ru.fastdelivery.services.GoogleMapsService;
-
-import java.math.BigDecimal;
+import ru.fastdelivery.services.NavigatorService;
 
 @Named
 @RequiredArgsConstructor
 public class TariffCalculateUseCase {
   private final WeightPriceProvider weightPriceProvider;
   private final VolumePriceProvider volumePriceProvider;
-  private final GoogleMapsService googleMapsService;
+  private final NavigatorService navigatorService;
 
   public Price calc(Shipment shipment, Coordinate departure, Coordinate destination) {
     var maxPriceByWeight = getMaxPriceByWeight(shipment);
@@ -23,8 +22,7 @@ public class TariffCalculateUseCase {
     var basePrice = maxPriceByWeight.max(maxPriceByVolume);
     var distance = getDistanceByCoordinates(departure, destination);
     var distanceCoefficient = distance > 450 ? (distance / 450) : 1;
-    var deliveryPrice = basePrice.multiply(BigDecimal.valueOf(distanceCoefficient));
-    return deliveryPrice;
+    return basePrice.multiply(BigDecimal.valueOf(distanceCoefficient));
   }
 
   public Price getMaxPriceByWeight(Shipment shipment) {
@@ -48,7 +46,7 @@ public class TariffCalculateUseCase {
     double originLng = departure.longitude();
     double destinationLat = destination.latitude();
     double destinationLng = destination.longitude();
-    return googleMapsService.calculateDistanceByCoordinates(
+    return navigatorService.calculateDistanceByCoordinates(
         originLat, originLng, destinationLat, destinationLng);
   }
 }
