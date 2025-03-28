@@ -4,7 +4,5 @@ currency:
 cost:
   rub:
     perKg: 400
-    minimal: 350
+    minimal: 450
     perCubicMeter: 500
-navigator:
-  api_key: "608d9eec-c525-4e01-8814-158d3863eefd"

@@ -6,16 +6,6 @@ import java.math.RoundingMode;
 /** Represents a volume measurement in cubic millimeters. */
 public record Volume(BigDecimal cubicMillimeters) implements Comparable<Volume> {
 
-  public Volume {
-    if (isNegative(cubicMillimeters)) {
-      throw new IllegalArgumentException("Volume cannot be below zero!");
-    }
-  }
-
-  private static boolean isNegative(BigDecimal volume) {
-    return BigDecimal.ZERO.compareTo(volume) > 0;
-  }
-
   public static Volume zero() {
     return new Volume(BigDecimal.ZERO);
   }

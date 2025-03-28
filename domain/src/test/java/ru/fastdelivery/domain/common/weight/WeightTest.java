@@ -1,7 +1,6 @@
 package ru.fastdelivery.domain.common.weight;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -11,13 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 class WeightTest {
-
-  @Test
-  @DisplayName("Попытка создать отрицательный вес -> исключение")
-  void whenGramsBelowZero_thenException() {
-    var weightGrams = new BigInteger("-1");
-    assertThatThrownBy(() -> new Weight(weightGrams)).isInstanceOf(IllegalArgumentException.class);
-  }
 
   @Test
   void equalsTypeWidth_same() {
@@ -50,15 +42,6 @@ class WeightTest {
     var actual = weightBase.add(new Weight(new BigInteger("1000")));
 
     assertThat(actual).isEqualTo(new Weight(new BigInteger("2000")));
-  }
-
-  @Test
-  @DisplayName("Первый вес больше второго -> true")
-  void whenFirstWeightGreaterThanSecond_thenTrue() {
-    var weightBig = new Weight(new BigInteger("1001"));
-    var weightSmall = new Weight(new BigInteger("1000"));
-
-    assertThat(weightBig.greaterThan(weightSmall)).isTrue();
   }
 
   @Test

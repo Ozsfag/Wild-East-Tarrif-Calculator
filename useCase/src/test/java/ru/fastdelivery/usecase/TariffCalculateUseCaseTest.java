@@ -15,29 +15,30 @@ import ru.fastdelivery.domain.common.currency.CurrencyFactory;
 import ru.fastdelivery.domain.common.price.Price;
 import ru.fastdelivery.domain.common.volume.Volume;
 import ru.fastdelivery.domain.common.weight.Weight;
+import ru.fastdelivery.domain.delivery.coordinate.Coordinate;
 import ru.fastdelivery.domain.delivery.pack.Pack;
 import ru.fastdelivery.domain.delivery.shipment.Shipment;
-import ru.fastdelivery.presentation.model.request.CoordinateRequest;
-import ru.fastdelivery.services.NavigatorService;
 
 class TariffCalculateUseCaseTest {
 
   final WeightPriceProvider weightPriceProvider = mock(WeightPriceProvider.class);
   final VolumePriceProvider volumePriceProvider = mock(VolumePriceProvider.class);
-  final NavigatorService navigatorService = mock(NavigatorService.class);
+  final DistancePriceProvider distancePriceProvider = mock(DistancePriceProvider.class);
   final Currency currency = new CurrencyFactory(code -> true).create("RUB");
 
   final TariffCalculateUseCase tariffCalculateUseCase =
-      new TariffCalculateUseCase(weightPriceProvider, volumePriceProvider, navigatorService);
+      new TariffCalculateUseCase(weightPriceProvider, volumePriceProvider, distancePriceProvider);
 
   @Test
   @DisplayName("Расчет стоимости доставки -> успешно")
   void whenCalculatePrice_thenSuccess() {
     var minimalPrice = new Price(BigDecimal.TEN, currency);
     var pricePerKg = new Price(BigDecimal.valueOf(100), currency);
+    var pricePerCubicMeter = new Price(BigDecimal.valueOf(500), currency);
 
     when(weightPriceProvider.minimalPrice()).thenReturn(minimalPrice);
     when(weightPriceProvider.costPerKg()).thenReturn(pricePerKg);
+    when(volumePriceProvider.costPerCubicMeter()).thenReturn(pricePerCubicMeter);
 
     var shipment =
         new Shipment(
@@ -45,11 +46,11 @@ class TariffCalculateUseCaseTest {
                 new Pack(
                     new Weight(BigInteger.valueOf(1200)), new Volume(BigDecimal.valueOf(1500)))),
             new CurrencyFactory(code -> true).create("RUB"));
-    var departure = new CoordinateRequest(55.755826, 37.617288);
-    var destination = new CoordinateRequest(56.755826, 38.617288);
+    var departure = new Coordinate(55.755826, 37.617288);
+    var destination = new Coordinate(56.755826, 38.617288);
     var expectedPrice = new Price(BigDecimal.valueOf(120), currency);
 
-    var actualPrice = tariffCalculateUseCase.calc(shipment, departure, destination);
+    var actualPrice = tariffCalculateUseCase.calculateTariff(shipment, departure, destination);
 
     assertThat(actualPrice)
         .usingRecursiveComparison()

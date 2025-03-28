@@ -11,22 +11,12 @@ import java.math.RoundingMode;
  */
 public record Weight(BigInteger weightGrams) implements Comparable<Weight> {
 
-  public Weight {
-    if (isLessThanZero(weightGrams)) {
-      throw new IllegalArgumentException("Weight cannot be below Zero!");
-    }
-  }
-
-  private static boolean isLessThanZero(BigInteger price) {
-    return BigInteger.ZERO.compareTo(price) > 0;
-  }
-
   public static Weight zero() {
     return new Weight(BigInteger.ZERO);
   }
 
   public BigDecimal kilograms() {
-    return new BigDecimal(weightGrams).divide(BigDecimal.valueOf(1000), 100, RoundingMode.HALF_UP);
+    return new BigDecimal(weightGrams).divide(BigDecimal.valueOf(1000), 4, RoundingMode.HALF_UP);
   }
 
   public Weight add(Weight additionalWeight) {
@@ -45,9 +35,5 @@ public record Weight(BigInteger weightGrams) implements Comparable<Weight> {
   @Override
   public int compareTo(Weight w) {
     return w.weightGrams().compareTo(weightGrams());
-  }
-
-  public boolean greaterThan(Weight w) {
-    return weightGrams().compareTo(w.weightGrams()) > 0;
   }
 }

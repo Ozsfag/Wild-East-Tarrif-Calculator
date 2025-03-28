@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,26 +37,32 @@ public class CalculateController {
         @ApiResponse(responseCode = "400", description = "Invalid input provided")
       })
   public CalculatePackagesResponse calculate(@Valid @RequestBody CalculatePackagesRequest request) {
-    var packsWeights =
-        request.packages().stream()
-            .map(
-                cargoPackage -> {
-                  var weight = new Weight(cargoPackage.weight());
-                  var length = cargoPackage.length();
-                  var width = cargoPackage.width();
-                  var height = cargoPackage.height();
-                  var cubicMillimeters = length.multiply(width).multiply(height);
-                  var volume = new Volume(cubicMillimeters);
-                  return new Pack(weight, volume);
-                })
-            .toList();
-    var departureRequest = request.departure();
-    var destinationRequest = request.destination();
-    var departureDto = CoordinateRequest.mapTo(departureRequest);
-    var destinationDto = CoordinateRequest.mapTo(destinationRequest);
-    var shipment = new Shipment(packsWeights, currencyFactory.create(request.currencyCode()));
-    var calculatedPrice = tariffCalculateUseCase.calc(shipment, departureDto, destinationDto);
+    List<Pack> packs = mapToPacks(request);
+    var shipment = createShipment(request, packs);
+    var calculatedPrice =
+        tariffCalculateUseCase.calculateTariff(
+            shipment,
+            CoordinateRequest.mapTo(request.departure()),
+            CoordinateRequest.mapTo(request.destination()));
     var minimalPrice = tariffCalculateUseCase.minimalPrice();
     return new CalculatePackagesResponse(calculatedPrice, minimalPrice);
+  }
+
+  private List<Pack> mapToPacks(CalculatePackagesRequest request) {
+    return request.packages().stream()
+        .map(
+            cargoPackage ->
+                new Pack(
+                    new Weight(cargoPackage.weight()),
+                    new Volume(
+                        cargoPackage
+                            .length()
+                            .multiply(cargoPackage.width())
+                            .multiply(cargoPackage.height()))))
+        .toList();
+  }
+
+  private Shipment createShipment(CalculatePackagesRequest request, List<Pack> packs) {
+    return new Shipment(packs, currencyFactory.create(request.currencyCode()));
   }
 }
