@@ -30,8 +30,10 @@ public record CalculatePackagesRequest(
     @Schema(
             description = "Координаты отправиеля",
             example = "{\"latitude\": 55.755826, \"longitude\": 37.617288}")
+        @NotNull
         CoordinateRequest departure,
     @Schema(
             description = "Координаты получателя",
             example = "{\"latitude\": 55.755826, \"longitude\": 37.617288}")
+        @NotNull
         CoordinateRequest destination) {}

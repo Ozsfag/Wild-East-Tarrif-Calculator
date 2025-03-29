@@ -6,7 +6,7 @@ import lombok.Value;
 
 /** Валюта для стоимости */
 @Value
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Currency {
   String code;
 }

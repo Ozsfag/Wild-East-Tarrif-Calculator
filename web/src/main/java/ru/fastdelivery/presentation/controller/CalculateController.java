@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.fastdelivery.domain.common.currency.CurrencyFactory;
-import ru.fastdelivery.domain.common.volume.Volume;
-import ru.fastdelivery.domain.common.weight.Weight;
 import ru.fastdelivery.domain.delivery.pack.Pack;
 import ru.fastdelivery.domain.delivery.shipment.Shipment;
+import ru.fastdelivery.mappers.CoordinateMapper;
+import ru.fastdelivery.mappers.PackageMapper;
 import ru.fastdelivery.presentation.model.request.CalculatePackagesRequest;
-import ru.fastdelivery.presentation.model.request.CoordinateRequest;
 import ru.fastdelivery.presentation.model.response.CalculatePackagesResponse;
 import ru.fastdelivery.usecase.TariffCalculateUseCase;
 
@@ -28,6 +27,8 @@ import ru.fastdelivery.usecase.TariffCalculateUseCase;
 public class CalculateController {
   private final TariffCalculateUseCase tariffCalculateUseCase;
   private final CurrencyFactory currencyFactory;
+  private final PackageMapper packageMapper = PackageMapper.INSTANCE;
+  private final CoordinateMapper coordinateMapper = CoordinateMapper.INSTANCE;
 
   @PostMapping
   @Operation(summary = "Расчет стоимости по упаковкам груза")
@@ -42,24 +43,10 @@ public class CalculateController {
     var calculatedPrice =
         tariffCalculateUseCase.calculateTariff(
             shipment,
-            CoordinateRequest.mapTo(request.departure()),
-            CoordinateRequest.mapTo(request.destination()));
+            coordinateMapper.coordinateRequestToCoordinate(request.departure()),
+            coordinateMapper.coordinateRequestToCoordinate(request.destination()));
     var minimalPrice = tariffCalculateUseCase.minimalPrice();
     return new CalculatePackagesResponse(calculatedPrice, minimalPrice);
-  }
-
-  private List<Pack> mapToPacks(CalculatePackagesRequest request) {
-    return request.packages().stream()
-        .map(
-            cargoPackage ->
-                new Pack(
-                    new Weight(cargoPackage.weight()),
-                    new Volume(
-                        cargoPackage
-                            .length()
-                            .multiply(cargoPackage.width())
-                            .multiply(cargoPackage.height()))))
-        .toList();
   }
 
   private Shipment createShipment(CalculatePackagesRequest request, List<Pack> packs) {

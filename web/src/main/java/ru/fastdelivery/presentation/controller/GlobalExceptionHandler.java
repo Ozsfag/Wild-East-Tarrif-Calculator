@@ -13,10 +13,4 @@ public class GlobalExceptionHandler {
     ApiError apiError = ApiError.badRequest(e.getMessage());
     return new ResponseEntity<>(apiError, apiError.httpStatus());
   }
-
-  @ExceptionHandler(IllegalStateException.class)
-  public ResponseEntity<ApiError> handleIllegalStateException(IllegalStateException e) {
-    ApiError apiError = ApiError.invalidApiKey(e.getLocalizedMessage());
-    return new ResponseEntity<>(apiError, apiError.httpStatus());
-  }
 }
