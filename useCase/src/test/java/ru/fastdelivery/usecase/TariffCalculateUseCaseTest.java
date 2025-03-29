@@ -35,10 +35,12 @@ class TariffCalculateUseCaseTest {
     var minimalPrice = new Price(BigDecimal.TEN, currency);
     var pricePerKg = new Price(BigDecimal.valueOf(100), currency);
     var pricePerCubicMeter = new Price(BigDecimal.valueOf(500), currency);
+    var pricePerDistance = new Price(BigDecimal.valueOf(450), currency);
 
     when(weightPriceProvider.minimalPrice()).thenReturn(minimalPrice);
     when(weightPriceProvider.costPerKg()).thenReturn(pricePerKg);
     when(volumePriceProvider.costPerCubicMeter()).thenReturn(pricePerCubicMeter);
+    when(distancePriceProvider.costPerDistance()).thenReturn(pricePerDistance);
 
     var shipment =
         new Shipment(

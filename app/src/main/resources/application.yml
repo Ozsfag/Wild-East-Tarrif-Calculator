@@ -6,3 +6,4 @@ cost:
     perKg: 400
     minimal: 450
     perCubicMeter: 500
+    perDistance: 450

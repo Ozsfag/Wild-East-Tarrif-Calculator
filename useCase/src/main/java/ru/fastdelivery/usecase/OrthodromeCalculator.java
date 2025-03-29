@@ -16,16 +16,20 @@ public class OrthodromeCalculator {
     var destinationLatRad = destinationLat * (pi / 180);
     var destinationLngRad = destinationLng * (pi / 180);
 
-    double cl1 = Math.cos(originLatRad);
-    double cl2 = Math.cos(destinationLatRad);
-    double sl1 = Math.sin(originLatRad);
-    double sl2 = Math.sin(destinationLatRad);
+    double cOriginLat = Math.cos(originLatRad);
+    double cDestinationLat = Math.cos(destinationLatRad);
+    double sOriginLat = Math.sin(originLatRad);
+    double sDestinationLat = Math.sin(destinationLatRad);
     double deltaLng = destinationLngRad - originLngRad;
-    double cdelta = Math.cos(deltaLng);
-    double sdelta = Math.sin(deltaLng);
+    double cDelta = Math.cos(deltaLng);
+    double sDelta = Math.sin(deltaLng);
 
-    double y = Math.sqrt(Math.pow(cl2 * sdelta, 2) + Math.pow(cl1 * sl2 - sl1 * cl2 * cdelta, 2));
-    double x = sl1 * sl2 + cl1 * cl2 * cdelta;
+    double y =
+        Math.sqrt(
+            Math.pow(cDestinationLat * sDelta, 2)
+                + Math.pow(
+                    cOriginLat * sDestinationLat - sOriginLat * cDestinationLat * cDelta, 2));
+    double x = sOriginLat * sDestinationLat + cOriginLat * cDestinationLat * cDelta;
     double ad = Math.atan2(y, x);
 
     return earthRadiusKilometers * ad;
