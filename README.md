@@ -1,117 +1,90 @@
-# Проект Тарифный Калькулятор
+# Tariff Calculator Project
 
-Расчет стоимости доставки грузов в зависимости от веса
-упаковок входящих в состав груза.
+This project calculates the delivery cost based on the weight of the packages included in the shipment.
 
-## Используемые технологии
+## Technologies Used
 
 - Spring Boot 3
 - Maven 3
 - JUnit 5
 - Swagger
 
-## Локальный запуск
+## Local Setup
 
-### Требования
+### Prerequisites
 
-Проект использует синтаксис Java 17. Для локального запуска вам потребуется
-установленный JDK 17.
+- Java 17 (JDK 17) must be installed.
 
-### Используя среду разработки IDEA
+### Running with IntelliJ IDEA
 
-Откройте проект. Дождитесь индексации. Создайте конфигурацию запуска
-или запустите main метод
-класса [app/src/main/java/ru/fastdelivery/Main.java](app/src/main/java/ru/fastdelivery/Main.java)
+1. Open the project in IntelliJ IDEA.
+2. Wait for indexing to complete.
+3. Create a run configuration or execute the `main` method in the
+   class [Main.java](app/src/main/java/ru/fastdelivery/Main.java).
 
-### Используя Docker
+### Running with Docker
 
-Вы можете создать Docker образ с приложением и запустить его.
+1. Build the project:
+   ```shell
+   ./mvnw clean package
+   ```
+2. Build the Docker image:
+   ```shell
+   docker build -t ru.fastdelivery:latest .
+   ```
+3. Run the Docker container:
+   ```shell
+   docker run -p 8081:8080 ru.fastdelivery:latest
+   ```
 
-Соберите проект:
+### Running with JAR
 
-```shell
-./mvnw clean package
-```
+1. Build the project:
+   ```shell
+   ./mvnw clean package
+   ```
+2. Run the JAR file:
+   ```shell
+   java -jar app/target/app-1.0-SNAPSHOT.jar
+   ```
 
-Создать образ:
+## Testing
 
-```shell
-docker build -t ru.fastdelivery:latest .
-```
+### Running Tests
 
-Запуск контейнера:
+Use the built-in Maven Wrapper to run tests, which also checks code style (checkstyle). Checkstyle reports are available
+at [target/site/checkstyle-aggregate.html](target/site/checkstyle-aggregate.html).
 
-```shell
-docker run -p 8081:8080 ru.fastdelivery:latest
-```
+- **Linux/macOS:**
+  ```shell
+  ./mvnw clean test
+  ```
 
-### Используя JAR
-
-Соберите проект:
-
-```shell
-./mvnw clean package
-```
-
-Запустите Jar файл:
-
-```shell
-java -jar app/target/app-1.0-SNAPSHOT.jar
-```
-
-## Тестирование кода
-
-### Запуск тестов
-
-Используя встроенный Maven Wrapper запустите
-фазу тестов, при этом будет произведена проверка
-стиля кода (checkstyle). Отчеты по checkstyle
-найдете в файле
-[target/site/checkstyle-aggregate.html](target/site/checkstyle-aggregate.html)
-
-Linux/macOs:
-
-```shell
-./mvnw clean test
-```
-
-Windows:
-
-```shell
-./mvnw.cmd clean test
-```
+- **Windows:**
+  ```shell
+  ./mvnw.cmd clean test
+  ```
 
 ## Swagger
 
-При запущенном приложение вы можете
-выполнять запросы используя интерфейс Swagger.
+Once the application is running, you can use the Swagger interface to execute requests:
 
-http://localhost:8080/swagger-ui/index.html
+[Swagger UI](http://localhost:8080/swagger-ui/index.html)
 
-## Структура приложения
+## Application Structure
 
-Приложения разделено на maven модули, каждый
-модуль отвечает за свою область применения:
+The application is divided into Maven modules, each responsible for a specific area:
 
-- [app](app)
+- **[app](app):** Contains the application entry point, bean configuration, and property reading
+  from [application.yml](app/src/main/resources/application.yml).
 
-Содержит класс запуска приложения, настройки связывания бинов,
-чтение значений из файла [application.yml](app/src/main/resources/application.yml)
+- **[domain](domain):** Contains all business logic classes such as Package, Weight, Currency, and Cost. Classes should
+  not depend on Spring Boot or other project modules.
 
-- [domain](domain)
+- **[useCase](useCase):** Contains business logic processes using domain classes. Classes should only depend on the
+  `domain` module and not on Spring Boot.
 
-В модуле находятся все классы участвующие в бизнес логике, такие как Упаковка,
-Вес, Валюта, Стоимость. Класс не должен содержать зависимостей на фреймворк Spring Boot и на другие модули проекта.
+- **[web](web):** Contains controllers and is the only module that interacts with the external world. It depends on
+  Spring Boot, `domain`, and `useCase`.
 
-- [useCase](useCase)
-
-В модуле находится все процессы бизнес логики использующие доменные
-классы. Класс не должен содержать зависимостей на фреймворк Spring Boot, только зависит от модуля `domain`
-
-- [web](web)
-
-В модуле находится контроллеры, этот модуль единственный общается с
-внешним миром. Содержит зависимости Spring Boot и `domain`, `useCase`.
-
-> [!NOTE]
-> Изменять зависимости между модулями не допускается
+> **Note:** Do not change dependencies between modules.

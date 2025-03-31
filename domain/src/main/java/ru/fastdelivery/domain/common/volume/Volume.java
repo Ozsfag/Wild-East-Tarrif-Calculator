@@ -37,8 +37,4 @@ public record Volume(BigDecimal cubicMillimeters) implements Comparable<Volume> 
   public int compareTo(Volume otherVolume) {
     return this.cubicMillimeters.compareTo(otherVolume.cubicMillimeters);
   }
-
-  public boolean isGreaterThan(Volume otherVolume) {
-    return this.cubicMillimeters.compareTo(otherVolume.cubicMillimeters) > 0;
-  }
 }

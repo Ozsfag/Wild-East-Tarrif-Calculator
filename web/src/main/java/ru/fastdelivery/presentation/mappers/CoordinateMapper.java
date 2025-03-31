@@ -1,13 +1,11 @@
-package ru.fastdelivery.mappers;
+package ru.fastdelivery.presentation.mappers;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 import ru.fastdelivery.domain.delivery.coordinate.Coordinate;
 import ru.fastdelivery.presentation.model.request.CoordinateRequest;
 
-@Mapper
+@Mapper(componentModel = "SPRING")
 public interface CoordinateMapper {
-  CoordinateMapper INSTANCE = Mappers.getMapper(CoordinateMapper.class);
 
   Coordinate coordinateRequestToCoordinate(CoordinateRequest request);
 }

@@ -23,7 +23,7 @@ import ru.fastdelivery.usecase.TariffCalculateUseCase;
 
 class CalculateControllerTest extends ControllerTest {
 
-  final String baseCalculateApi = "/api/v1/calculate/";
+  final String baseCalculateApi = "/api/v1/calculate";
   @MockBean TariffCalculateUseCase useCase;
   @MockBean CurrencyFactory currencyFactory;
 

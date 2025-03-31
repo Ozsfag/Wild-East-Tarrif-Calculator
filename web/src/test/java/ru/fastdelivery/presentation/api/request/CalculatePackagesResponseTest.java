@@ -25,10 +25,14 @@ import ru.fastdelivery.domain.delivery.coordinate.Coordinate;
 import ru.fastdelivery.domain.delivery.shipment.Shipment;
 import ru.fastdelivery.presentation.controller.CalculateController;
 import ru.fastdelivery.presentation.controller.GlobalExceptionHandler;
+import ru.fastdelivery.presentation.mappers.CoordinateMapper;
+import ru.fastdelivery.presentation.mappers.ShipmentMapper;
+import ru.fastdelivery.presentation.mappers.utils.ShipmentMapperUtil;
 import ru.fastdelivery.presentation.model.request.CalculatePackagesRequest;
 import ru.fastdelivery.presentation.model.request.CargoPackageRequest;
 import ru.fastdelivery.presentation.model.request.CoordinateRequest;
 import ru.fastdelivery.presentation.model.response.CalculatePackagesResponse;
+import ru.fastdelivery.presentation.services.CalculatorService;
 import ru.fastdelivery.usecase.TariffCalculateUseCase;
 
 class CalculatePackagesResponseTest {
@@ -68,9 +72,12 @@ class CalculatePackagesResponseTest {
   @DisplayName("Если в параметры передется пустой список упаковок -> выкидывается исключение.")
   public void whenEmptyPackagesList_thenThrowException() {
     TariffCalculateUseCase tariffCalculateUseCase = Mockito.mock(TariffCalculateUseCase.class);
-    CurrencyFactory currencyFactory = Mockito.mock(CurrencyFactory.class);
-    CalculateController calculateController =
-        new CalculateController(tariffCalculateUseCase, currencyFactory);
+    CoordinateMapper coordinateMapper = Mockito.mock(CoordinateMapper.class);
+    ShipmentMapper shipmentMapper = Mockito.mock(ShipmentMapper.class);
+    CalculatorService calculatorService =
+        new CalculatorService(shipmentMapper, tariffCalculateUseCase, coordinateMapper);
+    CalculateController calculateController = new CalculateController(calculatorService);
+    ShipmentMapperUtil shipmentMapperUtil = Mockito.mock(ShipmentMapperUtil.class);
 
     CoordinateRequest departure = new CoordinateRequest(55.755826, 37.617288);
     CoordinateRequest destination = new CoordinateRequest(59.939095, 30.315868);
@@ -94,7 +101,8 @@ class CalculatePackagesResponseTest {
       Mockito.verify(tariffCalculateUseCase, Mockito.never())
           .calculateTariff(Mockito.any(), Mockito.any(), Mockito.any());
       Mockito.verify(tariffCalculateUseCase, Mockito.never()).minimalPrice();
-      Mockito.verify(currencyFactory, Mockito.never()).create(Mockito.anyString());
+      Mockito.verify(shipmentMapperUtil, Mockito.never())
+          .getCurrencyFromCurrencyCode(Mockito.anyString());
     } catch (Exception e) {
       fail("Test failed with exception: " + e.getLocalizedMessage());
     }
@@ -104,9 +112,12 @@ class CalculatePackagesResponseTest {
   @DisplayName("Если в параметры передется null вместо списка упаковок -> выкидывается исключение.")
   public void whenNullPackagesList_thenThrowException() {
     TariffCalculateUseCase tariffCalculateUseCase = Mockito.mock(TariffCalculateUseCase.class);
-    CurrencyFactory currencyFactory = Mockito.mock(CurrencyFactory.class);
-    CalculateController calculateController =
-        new CalculateController(tariffCalculateUseCase, currencyFactory);
+    CoordinateMapper coordinateMapper = Mockito.mock(CoordinateMapper.class);
+    ShipmentMapper shipmentMapper = Mockito.mock(ShipmentMapper.class);
+    CalculatorService calculatorService =
+        new CalculatorService(shipmentMapper, tariffCalculateUseCase, coordinateMapper);
+    CalculateController calculateController = new CalculateController(calculatorService);
+    ShipmentMapperUtil shipmentMapperUtil = Mockito.mock(ShipmentMapperUtil.class);
 
     CoordinateRequest departure = new CoordinateRequest(55.755826, 37.617288);
     CoordinateRequest destination = new CoordinateRequest(59.939095, 30.315868);
@@ -130,7 +141,8 @@ class CalculatePackagesResponseTest {
       Mockito.verify(tariffCalculateUseCase, Mockito.never())
           .calculateTariff(Mockito.any(), Mockito.any(), Mockito.any());
       Mockito.verify(tariffCalculateUseCase, Mockito.never()).minimalPrice();
-      Mockito.verify(currencyFactory, Mockito.never()).create(Mockito.anyString());
+      Mockito.verify(shipmentMapperUtil, Mockito.never())
+          .getCurrencyFromCurrencyCode(Mockito.anyString());
     } catch (Exception e) {
       fail("Test failed with exception: " + e.getLocalizedMessage());
     }
@@ -140,9 +152,12 @@ class CalculatePackagesResponseTest {
   @DisplayName("Если в параметры передется null вместо координат -> выбрасывается исключение.")
   public void whenNullCoordinates_thenThrowException() {
     TariffCalculateUseCase tariffCalculateUseCase = Mockito.mock(TariffCalculateUseCase.class);
-    CurrencyFactory currencyFactory = Mockito.mock(CurrencyFactory.class);
-    CalculateController calculatorController =
-        new CalculateController(tariffCalculateUseCase, currencyFactory);
+    CoordinateMapper coordinateMapper = Mockito.mock(CoordinateMapper.class);
+    ShipmentMapper shipmentMapper = Mockito.mock(ShipmentMapper.class);
+    CalculatorService calculatorService =
+        new CalculatorService(shipmentMapper, tariffCalculateUseCase, coordinateMapper);
+    CalculateController calculateController = new CalculateController(calculatorService);
+    ShipmentMapperUtil shipmentMapperUtil = Mockito.mock(ShipmentMapperUtil.class);
 
     CargoPackageRequest packageRequest =
         new CargoPackageRequest(BigInteger.TEN, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.TEN);
@@ -151,20 +166,21 @@ class CalculatePackagesResponseTest {
         new CalculatePackagesRequest(
             List.of(packageRequest), "RUB", null, new CoordinateRequest(59.939095, 30.315868));
 
-    CalculatePackagesRequest requsetWithNullDestination =
+    CalculatePackagesRequest requestWithNullDestination =
         new CalculatePackagesRequest(
             List.of(packageRequest), "RUB", new CoordinateRequest(55.755826, 37.617288), null);
 
     Currency currency = new Currency("RUB");
-    Mockito.when(currencyFactory.create("RUB")).thenReturn(currency);
+    Mockito.when(shipmentMapperUtil.getCurrencyFromCurrencyCode("RUB")).thenReturn(currency);
 
     assertThrows(
-        NullPointerException.class, () -> calculatorController.calculate(requestWithNullDeparture));
+        NullPointerException.class, () -> calculateController.calculate(requestWithNullDeparture));
     assertThrows(
         NullPointerException.class,
-        () -> calculatorController.calculate(requsetWithNullDestination));
+        () -> calculateController.calculate(requestWithNullDestination));
 
-    Mockito.verify(currencyFactory, Mockito.never()).create(Mockito.anyString());
+    Mockito.verify(shipmentMapperUtil, Mockito.never())
+        .getCurrencyFromCurrencyCode(Mockito.anyString());
     Mockito.verify(tariffCalculateUseCase, Mockito.never())
         .calculateTariff(
             Mockito.any(Shipment.class),
